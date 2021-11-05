@@ -11,7 +11,7 @@ const Home = () => {
           <UberLogo src="https://i.ibb.co/84stgjq/uber-technologies-new-20218114.jpg" />
           <Profile>
             <Name>Osada Vidath</Name>
-            <UserImage src="https://yt3.ggpht.com/ytc/AKedOLSELFxKHM8XLpX-cqP0wSRIR0_wzeTAXrsuvgf2TA=s900-c-k-c0x00ffffff-no-rj" />
+            <UserImage src="https://firebasestorage.googleapis.com/v0/b/ceb-maintenance.appspot.com/o/profile-placeholder.png?alt=media&token=8ca54159-9ecc-40e6-bdad-db1fe9a71e35" />
           </Profile>
         </Header>
 
@@ -78,6 +78,7 @@ const UserImage = tw.img`
   border
   border-gray-300
   p-px
+  object-cover
 `;
 
 const ActionButtons = tw.div`
@@ -95,6 +96,7 @@ const ActionButton = tw.button`
   rounded-lg
   transition
   hover:scale-[104%]
+  hover:shadow-sm
 `;
 
 const ActionButtonImage = tw.img`
