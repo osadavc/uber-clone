@@ -9,13 +9,23 @@ const Search = () => {
 
   const [pickup, setPickup] = useState({
     value: "",
-    list: [],
+    list: [
+      {
+        placeName: null,
+        coordinates: [],
+      },
+    ],
     isFocused: false,
   });
 
   const [drop, setDrop] = useState({
     value: "",
-    list: [],
+    list: [
+      {
+        placeName: null,
+        coordinates: [],
+      },
+    ],
     isFocused: false,
   });
 
@@ -35,8 +45,12 @@ const Search = () => {
         .then((response) => {
           setPickup((prevPickup) => ({
             ...prevPickup,
-            list: response.data.features.map((item) => item.place_name),
+            list: response.data.features.map((item) => ({
+              placeName: item.place_name,
+              coordinates: item.center,
+            })),
           }));
+          console.log(pickup.list);
         })
         .catch((err) => console.log(err));
     } else {
@@ -51,7 +65,10 @@ const Search = () => {
         .then((response) => {
           setDrop((prevDrop) => ({
             ...prevDrop,
-            list: response.data.features.map((item) => item.place_name),
+            list: response.data.features.map((item) => ({
+              placeName: item.place_name,
+              coordinates: item.center,
+            })),
           }));
         })
         .catch((err) => console.log(err));
@@ -59,6 +76,17 @@ const Search = () => {
       setDrop((prevDrop) => ({ ...prevDrop, list: [] }));
     }
   }, [drop.value]);
+
+  const goToConfirmPage = () => {
+    localStorage.setItem(
+      "locations",
+      JSON.stringify({
+        pickup,
+        drop,
+      })
+    );
+    Router.push("/confirm");
+  };
 
   const getMapBoxURL = (input) =>
     `https://api.mapbox.com/geocoding/v5/mapbox.places/${input}.json?worldview=cn&access_token=${MAP_BOX_API_KEY}`;
@@ -96,7 +124,8 @@ const Search = () => {
               setState={(item) => {
                 setPickup((prevPickup) => ({
                   ...prevPickup,
-                  value: item,
+                  value: item.placeName,
+                  coordinates: item.coordinates,
                   isFocused: false,
                 }));
               }}
@@ -118,7 +147,8 @@ const Search = () => {
               setState={(item) => {
                 setDrop((prevDrop) => ({
                   ...prevDrop,
-                  value: item,
+                  value: item.placeName,
+                  coordinates: item.coordinates,
                   isFocused: false,
                 }));
               }}
@@ -134,9 +164,7 @@ const Search = () => {
         Saved Places
       </SavedPlaces>
 
-      <ConfirmLocationContainer>
-        <ConfirmLocation>Confirm Location</ConfirmLocation>
-      </ConfirmLocationContainer>
+      <ConfirmButton onClick={goToConfirmPage}>Confirm Location</ConfirmButton>
     </Wrapper>
   );
 };
@@ -152,7 +180,7 @@ const SearchSuggestions = ({ list, setState }) => {
             className="mb-1 border-b last:border-b-0"
           >
             <div>
-              <h3>{item}</h3>
+              <h3>{item.placeName}</h3>
             </div>
           </div>
         ))}
@@ -249,16 +277,8 @@ const StarIcon = tw.img`
   mr-2
 `;
 
-const ConfirmLocationContainer = tw.div`
-  w-full
-  flex
-  items-center
-  justify-center
-`;
-
-const ConfirmLocation = tw.button`
+const ConfirmButton = tw.button`
   bg-black
-  w-[95%]
   text-white
   mt-2
   py-3
@@ -266,6 +286,8 @@ const ConfirmLocation = tw.button`
   focus:ring-2
   focus:ring-offset-2
   focus:ring-black
+  text-lg
+  mx-4
 `;
 
 export default Search;
