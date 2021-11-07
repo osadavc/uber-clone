@@ -26,7 +26,7 @@ const Confirm = () => {
       </ArrowContainer>
       <Map locationData={locationData} />
       <RideContainer>
-        <RideSelector />
+        <RideSelector locationData={locationData} />
         <ConfirmButton>Confirm UberX</ConfirmButton>
       </RideContainer>
     </Wrapper>

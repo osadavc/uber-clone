@@ -1,8 +1,26 @@
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import tw from "tailwind-styled-components";
 import Map from "../components/Map";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "../../firebase";
 
 const Home = () => {
+  const [user, setUser] = useState();
+  const Router = useRouter();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+      } else {
+        setUser(null);
+        Router.replace("/login");
+      }
+    });
+  }, []);
+
   return (
     <Wrapper>
       <Map />
@@ -10,8 +28,8 @@ const Home = () => {
         <Header>
           <UberLogo src="https://i.ibb.co/84stgjq/uber-technologies-new-20218114.jpg" />
           <Profile>
-            <Name>Osada Vidath</Name>
-            <UserImage src="https://firebasestorage.googleapis.com/v0/b/ceb-maintenance.appspot.com/o/profile-placeholder.png?alt=media&token=8ca54159-9ecc-40e6-bdad-db1fe9a71e35" />
+            <Name>{user?.displayName}</Name>
+            <UserImage src={user?.photoURL} onClick={() => signOut(auth)} />
           </Profile>
         </Header>
 
@@ -78,7 +96,7 @@ const UserImage = tw.img`
   border
   border-gray-300
   p-px
-  object-cover
+  cursor-pointer
 `;
 
 const ActionButtons = tw.div`
